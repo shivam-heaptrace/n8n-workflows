@@ -1,0 +1,60 @@
+{
+  "id": "rtkqBfxq0DzJ6kC9",
+  "name": "Demo - Daily Fact Generator",
+  "active": false,
+  "nodes": [
+    {
+      "id": "8eed3238-2388-49bd-9af6-3b4ebb3b1be0",
+      "name": "Start",
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [0, 0],
+      "parameters": {}
+    },
+    {
+      "id": "483b28af-93f7-4709-a055-c95b35480239",
+      "name": "Run Daily at 9am",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [0, 180],
+      "parameters": {
+        "rule": {
+          "interval": [{ "field": "hours", "triggerAtHour": 9 }]
+        }
+      }
+    },
+    {
+      "id": "2692b780-1a94-4015-8606-05c038bfeaee",
+      "name": "Pick a Random Fact",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [224, 0],
+      "parameters": {
+        "mode": "runOnceForAllItems",
+        "jsCode": "\nconst facts = [\n  \"Honey never spoils — archaeologists have found 3,000-year-old honey in Egyptian tombs that was still edible.\",\n  \"A group of flamingos is called a flamboyance.\",\n  \"Octopuses have three hearts and blue blood.\",\n  \"The Eiffel Tower grows about 15cm taller in summer due to thermal expansion.\",\n  \"Bananas are berries, but strawberries are not.\",\n  \"A day on Venus is longer than a year on Venus.\",\n  \"Wombat poop is cube-shaped.\",\n  \"The shortest war in history lasted 38 to 45 minutes — between Britain and Zanzibar in 1896.\",\n  \"There are more possible iterations of a game of chess than atoms in the observable universe.\",\n  \"Cleopatra lived closer in time to the Moon landing than to the construction of the Great Pyramid.\"\n];\n\nconst fact = facts[Math.floor(Math.random() * facts.length)];\nconst now = new Date();\n\nreturn [{ json: {\n  fact,\n  generated_at: now.toISOString(),\n  day_of_week: now.toLocaleDateString('en-US', { weekday: 'long' }),\n  message: 'Here is your fact for today!'\n}}];\n"
+      }
+    },
+    {
+      "id": "6cd34509-ed4b-4b50-9f62-04d7271cc138",
+      "name": "Format Response",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [448, 0],
+      "parameters": {
+        "mode": "manual",
+        "includeOtherFields": true,
+        "assignments": {
+          "assignments": [
+            { "id": "status", "name": "status", "value": "success", "type": "string" }
+          ]
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Start": { "main": [[{ "node": "Pick a Random Fact", "type": "main", "index": 0 }]] },
+    "Run Daily at 9am": { "main": [[{ "node": "Pick a Random Fact", "type": "main", "index": 0 }]] },
+    "Pick a Random Fact": { "main": [[{ "node": "Format Response", "type": "main", "index": 0 }]] }
+  },
+  "settings": { "executionOrder": "v1" }
+}
