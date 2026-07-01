@@ -1,0 +1,105 @@
+{
+  "id": "xguZZIaZDAG55oTh",
+  "name": "Demo - Daily Summary - Engineering",
+  "active": false,
+  "nodes": [
+    {
+      "id": "1127a0f2-5619-4c31-8a15-af2ab11238e6",
+      "name": "Run Daily at 9am",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [0, 96],
+      "parameters": {
+        "rule": {
+          "interval": [{ "field": "hours", "hoursInterval": 24 }]
+        }
+      }
+    },
+    {
+      "id": "8e5254af-d5ec-4497-a1b5-39de178afa34",
+      "name": "Generate Sample Data",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [224, 96],
+      "parameters": {
+        "mode": "manual",
+        "includeOtherFields": false,
+        "assignments": {
+          "assignments": [
+            { "id": "field-1", "name": "reportDate", "value": "={{ $now.toISO() }}", "type": "string" },
+            { "id": "field-2", "name": "itemsProcessed", "value": "42", "type": "number" },
+            { "id": "field-3", "name": "status", "value": "success", "type": "string" },
+            { "id": "field-4", "name": "environment", "value": "demo", "type": "string" }
+          ]
+        }
+      }
+    },
+    {
+      "id": "f6ebb678-7f14-4a55-b872-e091680169a0",
+      "name": "Check Status",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.2,
+      "position": [448, 96],
+      "parameters": {
+        "conditions": {
+          "options": { "caseSensitive": true, "leftValue": "", "typeValidation": "loose" },
+          "conditions": [
+            {
+              "leftValue": "={{ $json.status }}",
+              "operator": { "type": "string", "operation": "equals" },
+              "rightValue": "success"
+            }
+          ],
+          "combinator": "and"
+        }
+      }
+    },
+    {
+      "id": "6d91280c-cb44-4674-a80c-7d0da0e2609d",
+      "name": "Format Success Summary",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [672, 0],
+      "parameters": {
+        "mode": "manual",
+        "includeOtherFields": true,
+        "assignments": {
+          "assignments": [
+            { "id": "field-5", "name": "summary", "value": "={{ $json.itemsProcessed }} items processed successfully on {{ $json.reportDate }}", "type": "string" },
+            { "id": "field-6", "name": "result", "value": "✅ Demo run complete", "type": "string" }
+          ]
+        }
+      }
+    },
+    {
+      "id": "e248b53c-e02a-4ee8-96c7-d887ed9cc2b5",
+      "name": "Format Error Summary",
+      "type": "n8n-nodes-base.set",
+      "typeVersion": 3.4,
+      "position": [672, 192],
+      "parameters": {
+        "mode": "manual",
+        "includeOtherFields": true,
+        "assignments": {
+          "assignments": [
+            { "id": "field-7", "name": "summary", "value": "Run did not complete successfully", "type": "string" },
+            { "id": "field-8", "name": "result", "value": "❌ Demo run failed", "type": "string" }
+          ]
+        }
+      }
+    }
+  ],
+  "connections": {
+    "Run Daily at 9am": { "main": [[{ "node": "Generate Sample Data", "type": "main", "index": 0 }]] },
+    "Generate Sample Data": { "main": [[{ "node": "Check Status", "type": "main", "index": 0 }]] },
+    "Check Status": {
+      "main": [
+        [{ "node": "Format Success Summary", "type": "main", "index": 0 }],
+        [{ "node": "Format Error Summary", "type": "main", "index": 0 }]
+      ]
+    }
+  },
+  "settings": { "executionOrder": "v1" },
+  "meta": { "aiBuilderAssisted": true, "builderVariant": "mcp" },
+  "description": "A sample demo workflow that runs daily, generates a summary of processed items, checks the status, and formats the result accordingly."
+}
