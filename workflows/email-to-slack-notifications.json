@@ -1,0 +1,85 @@
+{
+  "id": "TYV8qCYaLSs1xzdL",
+  "name": "Revenue Ops - Email to Slack Notifications",
+  "active": false,
+  "isArchived": false,
+  "versionId": "4124b83c-9d60-4805-9f91-2453f2c3130e",
+  "settings": {
+    "executionOrder": "v1",
+    "availableInMCP": true
+  },
+  "connections": {
+    "Watch Gmail Inbox": {
+      "main": [[{"node": "Check Email Criteria", "type": "main", "index": 0}]]
+    },
+    "Check Email Criteria": {
+      "main": [[{"node": "Send Slack Notification", "type": "main", "index": 0}]]
+    }
+  },
+  "nodes": [
+    {
+      "id": "7e576137-65a6-4d06-9402-1ac6406b7165",
+      "name": "Watch Gmail Inbox",
+      "type": "n8n-nodes-base.gmailTrigger",
+      "typeVersion": 1.4,
+      "position": [0, 0],
+      "parameters": {
+        "pollTimes": {"item": [{"mode": "everyMinute"}]},
+        "event": "messageReceived",
+        "simple": true,
+        "maxResults": 10,
+        "filters": {
+          "readStatus": "unread",
+          "q": "subject:(urgent OR \"action required\")"
+        }
+      }
+    },
+    {
+      "id": "287e658e-7e9a-4b73-a56a-f85882f05b55",
+      "name": "Check Email Criteria",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2.3,
+      "position": [224, 0],
+      "parameters": {
+        "conditions": {
+          "options": {"caseSensitive": false, "leftValue": "", "typeValidation": "loose"},
+          "combinator": "or",
+          "conditions": [
+            {
+              "id": "subject-urgent",
+              "leftValue": "={{ $json.subject }}",
+              "operator": {"type": "string", "operation": "contains"},
+              "rightValue": "urgent"
+            },
+            {
+              "id": "subject-action",
+              "leftValue": "={{ $json.subject }}",
+              "operator": {"type": "string", "operation": "contains"},
+              "rightValue": "action required"
+            }
+          ]
+        }
+      }
+    },
+    {
+      "id": "e609a00f-a322-4dea-9375-8907f9a3721d",
+      "name": "Send Slack Notification",
+      "type": "n8n-nodes-base.slack",
+      "typeVersion": 2.5,
+      "position": [448, 0],
+      "parameters": {
+        "resource": "message",
+        "operation": "post",
+        "authentication": "oAuth2",
+        "select": "channel",
+        "channelId": {"__rl": true, "mode": "name", "value": "revenue-ops-alerts"},
+        "messageType": "text",
+        "text": "=📧 *New Email Alert*\n*From:* {{ $json.from }}\n*Subject:* {{ $json.subject }}\n*Preview:* {{ $json.snippet }}",
+        "otherOptions": {"includeLinkToWorkflow": false, "mrkdwn": true}
+      }
+    }
+  ],
+  "tags": [],
+  "meta": {"aiBuilderAssisted": true, "builderVariant": "mcp"},
+  "description": "Monitors Gmail for unread emails with subject keywords \"urgent\" or \"action required\" and posts an alert to the #revenue-ops-alerts Slack channel."
+}
