@@ -1,0 +1,7 @@
+{
+  "asset_name": "content-hackernews-digest-slack",
+  "manual_time_minutes_per_run": 23,
+  "estimated_runs_per_week": 1,
+  "snapshot_generated_at": "2026-06-22T10:52:30Z",
+  "snapshot_generated_by": "vishalm.mishra@fulcrumapp.com"
+}
