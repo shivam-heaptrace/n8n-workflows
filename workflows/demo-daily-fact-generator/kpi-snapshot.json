@@ -1,0 +1,7 @@
+{
+  "asset_name": "demo-daily-fact-generator",
+  "manual_time_minutes_per_run": 20,
+  "estimated_runs_per_week": 70,
+  "snapshot_generated_at": "2026-06-22T16:10:30Z",
+  "snapshot_generated_by": "vishalm.mishra@fulcrumapp.com"
+}
