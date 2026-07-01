@@ -1,7 +1,7 @@
 {
   "asset_name": "library-management",
-  "manual_time_minutes_per_run": 15,
-  "estimated_runs_per_week": 40,
+  "manual_time_minutes_per_run": 30,
+  "estimated_runs_per_week": 20,
   "snapshot_generated_at": "2026-06-22T16:10:30Z",
   "snapshot_generated_by": "vishalm.mishra@fulcrumapp.com"
 }
