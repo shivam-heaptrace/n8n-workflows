@@ -1,7 +1,7 @@
 {
   "asset_name": "demo-daily-summary-engineering",
-  "manual_time_minutes_per_run": 60,
-  "estimated_runs_per_week": 7,
+  "manual_time_minutes_per_run": 30,
+  "estimated_runs_per_week": 14,
   "snapshot_generated_at": "2026-06-22T16:10:30Z",
   "snapshot_generated_by": "vishalm.mishra@fulcrumapp.com"
 }
